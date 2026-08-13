@@ -35,12 +35,14 @@ source venv/bin/activate
 ```
 - Windows (PowerShell):
 ```powershell
-.venv\\Scripts\\Activate.ps1
+venv\\Scripts\\Activate.ps1
 ```
 - Windows (Git Bash):
 ```Bash
-source .venv\\Scripts\\Activate
+source venv\\Scripts\\Activate
 ```
+
+If you encounter any issue while activating the virtual environment, please to the troubleshooting section down below.
 
 4. Install Python dependencies from `requirements.txt`:
 
@@ -48,7 +50,11 @@ source .venv\\Scripts\\Activate
 uv pip install -r requirements.txt
 ```
 
-(Alternatively, you can use `uv add <package>` for single packages, e.g. `uv add ollama`.)
+To verify the requirements installed correctly, run the following command to list the installed packages and look for `ollama` in the list:
+
+```bash
+uv pip list
+```
 
 ## Install & configure Ollama
 
@@ -71,7 +77,7 @@ curl -fsSL https://ollama.com/install.sh | sh
 powershell -c "irm https://ollama.com/install.ps1 | iex"
 ```
 
-Verify Ollama is running:
+Restart the command line and verify Ollama is running:
 
 ```bash
 ollama --version
@@ -150,4 +156,9 @@ sudo systemctl restart ollama
 # Windows PowerShell (as Admin)
 Get-Service Ollama | Restart-Service
 ```
+
+**Error while activating Virtual Environment on Windows**
+* Error Message: `.\venv\Scripts\activate : File venv\Scripts\activate.ps1 cannot be loaded because running scripts is disabled on this system. For more information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.`
+* Solution : By default script execution is disabled in powershell, you have to enable it using the following command `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`. This command enables the execution policy for the current user. By default, the execution policy for Windows is set to Restricted. You can check the current execution policy by running `Get-ExecutionPolicy`.
+
 
