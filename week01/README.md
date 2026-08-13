@@ -96,15 +96,32 @@ Open the notebook for this lab:
 
 - File: `week01/lab1_first_call_the_no_memory_surprise_carrying_history.ipynb`
 
+Before running the first notebook cell in VS Code:
+
+1. Launch VS Code from the repository root:
+
+```bash
+code .
+```
+
+2. Install the recommended VS Code extensions if they are not already installed.
+   - Install the `Python` extension from Microsoft.
+   - Install the `Jupyter` extension from Microsoft.
+
+3. Open the [notebook file](./lab1_first_call_the_no_memory_surprise_carrying_history.ipynb).
+
+4. Select the Python interpreter for the virtual environment you created earlier.
+	- In VS Code, open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`).
+	- Run `Python: Select Interpreter`.
+	- Choose the interpreter from the root folder: `.venv/bin/python` 
+
+5. Confirm the notebook kernel is using that same interpreter, then run the first cell.
+
 Notes:
 
-- The notebook now contains a short intro only. All environment and Ollama setup instructions live in this `README.md`.
+- All environment and Ollama setup instructions live in this `README.md`.
 - In the notebook, run cells in order. If the kernel restarts or you changed environments, re-run the setup steps above before running the model-calling cells.
 
-A minimal workflow in the notebook:
-1. Run the cell that calls `ollama.chat(...)` to make the first user message.
-2. Inspect the assistant reply (the notebook shows how to print and reuse it).
-3. Re-run the cell that replays conversation history to see the "memory" effect.
 
 ## Troubleshooting
 
