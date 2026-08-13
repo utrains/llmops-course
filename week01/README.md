@@ -24,24 +24,28 @@ cd llmops-course
 2. Create a virtual environment using `uv` (example using Python 3.14):
 
 ```bash
-uv venv .venv --python 3.14
+uv venv venv --python 3.14
 ```
 
 3. Activate the virtual environment:
 
 - macOS / Linux:
 ```bash
-source .venv/bin/activate
+source venv/bin/activate
 ```
 - Windows (PowerShell):
 ```powershell
 .venv\\Scripts\\Activate.ps1
 ```
+- Windows (Git Bash):
+```Bash
+source .venv\\Scripts\\Activate
+```
 
 4. Install Python dependencies from `requirements.txt`:
 
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 (Alternatively, you can use `uv add <package>` for single packages, e.g. `uv add ollama`.)
