@@ -104,7 +104,31 @@ Note that The very first time you run a model, Ollama has to load about 1.3 GB o
 
 Open the notebook for this lab:
 
-- File: `week01/lab1_first_call_the_no_memory_surprise_carrying_history.ipynb`
+- File: `week01/week01_labs.ipynb`
+
+After installing dependencies, register the virtual environment as a notebook kernel (one time):
+
+```bash
+python -m ipykernel install --user --name venv --display-name "llmop-course-venv"
+```
+
+Then choose one of these two options: JupyterLab or VS Code.
+
+### Option 1: Run in JupyterLab
+
+1. From the repository root with the virtual environment activated, launch JupyterLab:
+
+```bash
+jupyter lab
+```
+
+2. Open `week01/week01_labs.ipynb`.
+
+3. In the kernel picker, select `llmop-course-venv`.
+
+4. Run cells in order.
+
+### Option 2: Run in VS Code
 
 Before running the first notebook cell in VS Code:
 
@@ -118,14 +142,15 @@ code .
    - Install the `Python` extension from Microsoft.
    - Install the `Jupyter` extension from Microsoft.
 
-3. Open the [notebook file](./lab1_first_call_the_no_memory_surprise_carrying_history.ipynb).
+- Open the [notebook file](./week01/week01_labs.ipynb).
 
 4. Select the Python interpreter for the virtual environment you created earlier.
 	- In VS Code, open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`).
 	- Run `Python: Select Interpreter`.
-	- Choose the interpreter from the root folder: `.venv/bin/python` 
+	- Choose the interpreter from the root folder: `venv/bin/python` 
 
 5. Confirm the notebook kernel is using that same interpreter, then run the first cell.
+
 
 Notes:
 
@@ -139,7 +164,7 @@ Notes:
 |---------|-----|
 | A cell says "In [*]" for more than 3 minutes and nothing prints. | Restart the kernel. In VS Code: click the "Restart" icon at the top of the notebook. In JupyterLab: Kernel > Restart Kernel. |
 | `ollama.chat(...)` raises `ConnectionRefused`. | The Ollama background service is not running. On Mac open Ollama.app. On Linux run `sudo systemctl start ollama`. On Windows open the Ollama app or reboot. |
-| Import error: `No module named 'ollama'`. | You are running the notebook with the wrong Python. Change kernel to your `.venv` (top-right corner). If ollama is missing from `.venv`, run `pip install ollama`. |
+| Import error: `No module named 'ollama'`. | You are running the notebook with the wrong Python. Change kernel to your `venv` (top-right corner). If ollama is missing from `venv`, run `uv pip install ollama`. |
 | Kernel repeatedly dies mid-run. | Your machine is low on RAM. Close other apps. Make sure no other model is running (`ollama ps` to check, `ollama stop llama3.2:1b` to free memory). |
 | Everything looks fine but the model gives nonsense. | Small models (like `llama3.2:1b`) hallucinate more than big ones. That is expected. See the probabilistic note under Step 8. |
 
