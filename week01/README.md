@@ -89,7 +89,7 @@ Restart the command line and verify Ollama is running:
 ollama --version
 ```
 
-(Optional) Pull the model used in the lab (`llama3.2:1b`):
+Pull the model used in the lab (`llama3.2:1b`):
 
 ```bash
 ollama pull llama3.2:1b
