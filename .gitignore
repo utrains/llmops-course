@@ -2,3 +2,7 @@ env
 venv
 .venv
 llmops-env
+
+.env
+.env.local
+*.key
