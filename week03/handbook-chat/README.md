@@ -1,6 +1,6 @@
 # Handbook chatbot
 
-Labs 1–6 in one Gradio app: chunk `handbook.txt`, embed, store, retrieve, answer.
+Labs 1–2 in one Streamlit app: chunk `handbook.txt`, embed, store, retrieve, answer.
 
 ## Run with Docker
 
@@ -11,11 +11,17 @@ Labs 1–6 in one Gradio app: chunk `handbook.txt`, embed, store, retrieve, answ
 docker compose up --build
 ```
 
-3. Open [http://localhost:7860](http://localhost:7860).
+On Windows PowerShell, use `copy env.example .env` instead of `cp`.
+
+3. Open [http://localhost:8501](http://localhost:8501).
 
 ## Run without Docker
 
+From this folder, with the course virtual environment activated:
+
 ```bash
 pip install -r requirements.txt
-python app.py
+streamlit run app.py
 ```
+
+Open the URL Streamlit prints (usually [http://localhost:8501](http://localhost:8501)).

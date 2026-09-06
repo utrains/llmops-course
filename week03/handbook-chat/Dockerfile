@@ -7,10 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY handbook.txt app.py ./
 
-ENV GRADIO_SERVER_NAME=0.0.0.0
-ENV GRADIO_SERVER_PORT=7860
 ENV PYTHONUNBUFFERED=1
 
-EXPOSE 7860
+EXPOSE 8501
 
-CMD ["python", "app.py"]
+CMD ["streamlit", "run", "app.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true"]
