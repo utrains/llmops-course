@@ -1,3 +1,4 @@
+# Do not copy secrets or local junk into the Docker image.
 .env
 __pycache__
 *.pyc
