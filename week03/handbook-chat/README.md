@@ -1,7 +1,7 @@
 # HR policy chatbot
 
-This folder is Labs 1 and 2 as a small Streamlit app. It loads `hr_policy.txt`,
-cuts it into chunks, embeds the chunks, searches the closest three for a question,
+This folder runs the Week 3 retrieval and generation pipeline through Streamlit. It loads `hr_policy.txt`,
+splits it into chunks, embeds the chunks, searches the closest three for a question,
 then Claude answers only from those chunks.
 
 You should finish Lab 2 before you run this app, so you have already seen the same

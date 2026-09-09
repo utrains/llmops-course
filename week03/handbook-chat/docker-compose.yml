@@ -2,7 +2,7 @@ services:
   handbook-chat:
     build: .
     ports:
-      # host:container — open http://localhost:8501 in your browser
+      # host:container. Open http://localhost:8501 in your browser.
       - "8501:8501"
     # Reads this folder's .env and puts the keys in the container.
     # The .env file itself is not copied into the image (.dockerignore).

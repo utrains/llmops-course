@@ -15,7 +15,8 @@ load_dotenv()
 SYSTEM = (
     "You are an HR assistant. "
     "Answer only from the HR policy context. "
-    "If the answer is not in the context, say you cannot find it."
+    "If the answer is not in the context, say you cannot find it. "
+    "End a supported answer with the source and chunk citation supplied in the context."
 )
 
 
@@ -32,23 +33,24 @@ def build_retriever():
 
     docs = []
     for i, text in enumerate(chunk_texts):
-        docs.append(Document(page_content=text, metadata={"chunk": i}))
+        docs.append(
+            Document(
+                page_content=text,
+                metadata={"source": "hr_policy.txt", "chunk": i},
+            )
+        )
 
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     store = InMemoryVectorStore.from_documents(docs, embedding=embeddings)
-    # k=3: every question returns the three closest chunks.
+    # Return up to three closest chunks for inspection and generation.
     return store.as_retriever(search_kwargs={"k": 3})
 
 
 retriever = build_retriever()
-# temperature=0: pick the most likely words, not a random phrasing.
 llm = ChatAnthropic(model="claude-haiku-4-5", temperature=0)
 
 st.title("Ask the HR policy")
-st.write(
-    "This app is Labs 1 and 2 in a chat window. "
-    "It searches hr_policy.txt, then Claude answers only from the retrieved chunks."
-)
+st.write("Ask questions using the approved HR policy as evidence.")
 
 # session_state keeps values when Streamlit re-runs the file.
 if "messages" not in st.session_state:
@@ -70,7 +72,8 @@ if question:
     hits = retriever.invoke(question)
     parts = []
     for hit in hits:
-        parts.append(hit.page_content)
+        citation = "Source: " + hit.metadata["source"] + ", chunk " + str(hit.metadata["chunk"])
+        parts.append(citation + "\n" + hit.page_content)
     context = "\n\n".join(parts)
 
     reply = llm.invoke(
@@ -86,6 +89,6 @@ if question:
     with st.chat_message("assistant"):
         st.write(reply.content)
 
-# Show the chunks used for the last answer so you can check them.
+# Show the evidence used for the last answer.
 if st.session_state["context"]:
-    st.text_area("Retrieved chunks", st.session_state["context"], height=160, disabled=True)
+    st.text_area("Retrieved evidence", st.session_state["context"], height=200, disabled=True)
