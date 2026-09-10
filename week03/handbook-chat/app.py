@@ -1,3 +1,6 @@
+from pathlib import Path
+from time import perf_counter
+
 from dotenv import load_dotenv
 import streamlit as st
 from langchain_anthropic import ChatAnthropic
@@ -6,89 +9,127 @@ from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-# Same as Week 2 and Lab 2. Reads OPENAI_API_KEY and ANTHROPIC_API_KEY
-# from the .env file in this folder. OpenAIEmbeddings and ChatAnthropic
-# pick up those keys on their own.
 load_dotenv()
 
-# Standing rule for Claude (Week 2: role, constraint, escape hatch).
-SYSTEM = (
-    "You are an HR assistant. "
-    "Answer only from the HR policy context. "
-    "If the answer is not in the context, say you cannot find it. "
-    "End a supported answer with the source and chunk citation supplied in the context."
+EMBEDDING_MODEL = "text-embedding-3-small"
+GENERATION_MODEL = "claude-haiku-4-5"
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 50
+INDEX_VERSION = "2026.1"
+
+SYSTEM_MESSAGE = (
+    "You are the company HR policy assistant. "
+    "Answer only from the supplied context. "
+    "If the answer is absent, say: I cannot find that answer in the available HR policy. "
+    "End supported answers with the source and section used."
 )
 
 
-# Streamlit re-runs this whole file on every question. @st.cache_resource
-# keeps the index in memory so we do not embed the HR policy again each time.
 @st.cache_resource
-def build_retriever():
-    with open("hr_policy.txt", encoding="utf-8") as f:
-        policy = f.read()
+def build_vector_store():
+    policy_folder = Path("policies")
+    if not policy_folder.exists():
+        policy_folder = Path("../policies")
 
-    # Lab 1: split, embed, store.
-    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    chunk_texts = splitter.split_text(policy)
+    policy_files = sorted(policy_folder.glob("*.md"))
+    sections = []
 
-    docs = []
-    for i, text in enumerate(chunk_texts):
-        docs.append(
-            Document(
-                page_content=text,
-                metadata={"source": "hr_policy.txt", "chunk": i},
+    for policy_file in policy_files:
+        parts = policy_file.read_text(encoding="utf-8").split("\n## ")
+        for part in parts[1:]:
+            heading, text = part.split("\n", 1)
+            sections.append(
+                {"source": policy_file.name, "section": heading, "text": text.strip()}
             )
-        )
 
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-    store = InMemoryVectorStore.from_documents(docs, embedding=embeddings)
-    # Return up to three closest chunks for inspection and generation.
-    return store.as_retriever(search_kwargs={"k": 3})
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        separators=["\n\n", "\n", ". ", " ", ""],
+    )
+
+    documents = []
+    for section in sections:
+        pieces = splitter.split_text(section["text"])
+        for position, piece in enumerate(pieces):
+            metadata = {
+                "source": section["source"],
+                "section": section["section"],
+                "position": position,
+                "version": INDEX_VERSION,
+                "status": "current",
+            }
+            documents.append(Document(page_content=piece, metadata=metadata))
+
+    embeddings = OpenAIEmbeddings(model=EMBEDDING_MODEL)
+    return InMemoryVectorStore.from_documents(documents, embedding=embeddings)
 
 
-retriever = build_retriever()
-llm = ChatAnthropic(model="claude-haiku-4-5", temperature=0)
+vector_store = build_vector_store()
+llm = ChatAnthropic(model=GENERATION_MODEL, temperature=0)
 
-st.title("Ask the HR policy")
-st.write("Ask questions using the approved HR policy as evidence.")
+st.title("Company HR policy assistant")
+st.write("Ask a question and inspect the policy evidence used for the answer.")
 
-# session_state keeps values when Streamlit re-runs the file.
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
-if "context" not in st.session_state:
-    st.session_state["context"] = ""
+if "evidence" not in st.session_state:
+    st.session_state["evidence"] = ""
+if "request_details" not in st.session_state:
+    st.session_state["request_details"] = {}
 
 for message in st.session_state["messages"]:
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
-question = st.chat_input("How do I get reimbursed for a $300 train ticket?")
+question = st.chat_input("Can I expense a $300 train ticket without approval?")
+
 if question:
     st.session_state["messages"].append({"role": "user", "content": question})
     with st.chat_message("user"):
         st.write(question)
 
-    # Lab 1: closest chunks. Lab 2: answer only from those chunks.
-    hits = retriever.invoke(question)
-    parts = []
-    for hit in hits:
-        citation = "Source: " + hit.metadata["source"] + ", chunk " + str(hit.metadata["chunk"])
-        parts.append(citation + "\n" + hit.page_content)
-    context = "\n\n".join(parts)
+    started = perf_counter()
+    def is_current(document):
+        return document.metadata["status"] == "current"
 
-    reply = llm.invoke(
-        [
-            ("system", SYSTEM),
-            ("human", "Context:\n" + context + "\n\nQuestion: " + question),
-        ]
+    results = vector_store.similarity_search_with_score(
+        question, k=3, filter=is_current
     )
 
-    st.session_state["messages"].append({"role": "assistant", "content": reply.content})
-    st.session_state["context"] = context
+    context_parts = []
+    sources = []
+    for document, score in results:
+        citation = document.metadata["source"] + " | " + document.metadata["section"]
+        sources.append(citation)
+        context_parts.append("Source: " + citation + "\n" + document.page_content)
+
+    context = "\n\n".join(context_parts)
+    user_message = "Context:\n" + context + "\n\nEmployee question:\n" + question
+    response = llm.invoke([("system", SYSTEM_MESSAGE), ("human", user_message)])
+    elapsed_ms = round((perf_counter() - started) * 1000, 1)
+
+    st.session_state["messages"].append(
+        {"role": "assistant", "content": response.content}
+    )
+    st.session_state["evidence"] = context
+    st.session_state["request_details"] = {
+        "index_version": INDEX_VERSION,
+        "embedding_model": EMBEDDING_MODEL,
+        "generation_model": GENERATION_MODEL,
+        "retrieved_sources": sources,
+        "retrieved_sections": [
+            document.metadata["section"] for document, score in results
+        ],
+        "elapsed_ms": elapsed_ms,
+    }
 
     with st.chat_message("assistant"):
-        st.write(reply.content)
+        st.write(response.content)
 
-# Show the evidence used for the last answer.
-if st.session_state["context"]:
-    st.text_area("Retrieved evidence", st.session_state["context"], height=200, disabled=True)
+if st.session_state["evidence"]:
+    with st.expander("Retrieved evidence"):
+        st.text(st.session_state["evidence"])
+
+    with st.expander("Request details"):
+        st.json(st.session_state["request_details"])

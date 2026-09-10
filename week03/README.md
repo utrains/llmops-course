@@ -10,13 +10,26 @@ AI engineers commonly design chunking, embeddings, retrieval, prompts, and answe
 
 The design decision used in these labs is structure-aware recursive chunking with controlled size, limited overlap, and source metadata. Learners implement and test that decision as an operational pipeline.
 
+## What makes this LLMOps work
+
+The notebooks do not stop at retrieving text. They also make the pipeline reviewable:
+
+- the source, section, version, status, chunk settings, and embedding model are visible;
+- retrieval evidence is inspected before generation;
+- archived records can be excluded with metadata filters;
+- known questions run as repeatable retrieval tests;
+- latency and retrieved sources are recorded for troubleshooting;
+- a release decision is made from evaluation results before the application is containerized.
+
+The lab uses an in-memory vector store so each moving part stays visible. The same index contract can later be implemented with pgvector or another production vector store.
+
 ## Lab progression
 
 | Lab | Business mission | Moving pieces exposed |
 | --- | --- | --- |
-| [Lab 1](./lab1_from_a_handbook_to_a_search.ipynb) | Find the correct policy evidence for an employee question. | source inspection, section parsing, recursive splitting, chunk size, overlap, metadata, embeddings, similarity, top k |
+| [Lab 1](./lab1_from_a_handbook_to_a_search.ipynb) | Turn approved HR documents into a searchable, traceable index. | source inspection, section parsing, recursive splitting, chunk size, overlap, metadata, embeddings, similarity, top k |
 | [Lab 2](./lab2_end_to_end_chat_with_your_own_docs.ipynb) | Produce a grounded HR answer with citations and an insufficient-evidence response. | retrieval, context construction, system instructions, generation model, citations, missing evidence |
-| [Lab 3](./lab3_watch_rag_fail_on_real_world_edge_cases.ipynb) | Detect retrieval failures before a pipeline change reaches production. | exact identifiers, conflicting versions, lifecycle metadata, missing answers, test cases, retrieval accuracy |
+| [Lab 3](./lab3_watch_rag_fail_on_real_world_edge_cases.ipynb) | Evaluate retrieval and make an evidence-based release decision. | exact identifiers, conflicting versions, lifecycle filters, missing answers, tests, latency, release gate |
 | [Containerized app](./handbook-chat/) | Run the same request path through a chat interface. | Streamlit, cached index, API configuration, Docker |
 
 Each exercise follows the same learning pattern:
@@ -30,7 +43,7 @@ Each exercise follows the same learning pattern:
 ## Request path
 
 ```text
-HR documents
+Approved HR documents
     -> parse and inspect
     -> split into traceable chunks
     -> create embeddings
@@ -38,7 +51,7 @@ HR documents
     -> retrieve evidence
     -> build grounded context
     -> generate and cite an answer
-    -> evaluate the result
+    -> evaluate and make a release decision
 ```
 
 ## Setup
@@ -66,6 +79,8 @@ Open the notebooks from the `week03` directory and run them in order. API inputs
 | --- | --- |
 | OpenAI `text-embedding-3-small` | Embeds both indexed chunks and employee questions into the same vector space. |
 | Anthropic `claude-haiku-4-5` | Generates the grounded response in Lab 2 and the application. |
+
+These are the implementation choices for the lab, not the only valid choices. Embedding providers commonly seen in RAG roles include OpenAI, Cohere, Voyage AI, Google, and open-weight BGE or E5 models. Generation commonly uses OpenAI, Anthropic, Google Gemini, or hosted open-weight models through Bedrock, Azure AI Foundry, or Vertex AI. Vector search roles commonly mention pgvector, Pinecone, Qdrant, Weaviate, Milvus, and Azure AI Search. Students should be able to explain why a team might choose a different provider, then record and evaluate that change.
 
 Use one embedding model and configuration per index. Changing the embedding model requires rebuilding the index and rerunning the retrieval evaluation.
 

@@ -1,18 +1,18 @@
 # HR policy chatbot
 
-This folder runs the Week 3 retrieval and generation pipeline through Streamlit. It loads `hr_policy.txt`,
-splits it into chunks, embeds the chunks, searches the closest three for a question,
-then Claude answers only from those chunks.
+This folder runs the Week 3 retrieval and generation pipeline through Streamlit.
+It loads the approved policy folder, preserves policy sections, splits oversized
+sections, stores metadata, retrieves the closest evidence, and asks Claude to
+answer only from that evidence.
 
-You should finish Lab 2 before you run this app, so you have already seen the same
-loop in the notebook.
+The request path is the same one made visible in Labs 1 and 2.
 
 ## Files in this folder
 
 | File | What it is |
 |------|------------|
 | `app.py` | The Streamlit app. Read the comments in that file. |
-| `hr_policy.txt` | The same HR policy as the Week 3 notebooks. |
+| `../policies/` | The same HR policy collection used by the notebooks. |
 | `requirements.txt` | Python packages for this app. |
 | `env.example` | Copy this to `.env` and paste your keys. |
 | `Dockerfile` / `docker-compose.yml` | Run the app in Docker. |
@@ -47,7 +47,8 @@ docker compose up --build
 Wait until the terminal says the app is running. Open [http://localhost:8501](http://localhost:8501).
 
 Ask: `How do I get reimbursed for a $300 train ticket?`  
-Read the **Retrieved chunks** box under the answer. Those are the paragraphs Claude was allowed to use.
+Open **Retrieved evidence** and **Request details** under the answer. They show
+the policy context and operational information used for the request.
 
 Stop the app with `Ctrl+C` in that terminal.
 
@@ -67,5 +68,5 @@ Open the URL Streamlit prints (usually [http://localhost:8501](http://localhost:
 | Symptom | Fix |
 |---------|-----|
 | Authentication error | `.env` is missing, or a key is wrong. Paste both keys, restart the app. |
-| `FileNotFoundError: hr_policy.txt` | Run the command from this folder, not from the repository root. |
+| No policy evidence appears | Confirm that the five Markdown files exist in `week03/policies`. |
 | Port 8501 already in use | Another Streamlit or Docker app is using that port. Stop it, or change the port in `docker-compose.yml`. |

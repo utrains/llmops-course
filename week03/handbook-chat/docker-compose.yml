@@ -1,6 +1,8 @@
 services:
   handbook-chat:
-    build: .
+    build:
+      context: ..
+      dockerfile: handbook-chat/Dockerfile
     ports:
       # host:container. Open http://localhost:8501 in your browser.
       - "8501:8501"

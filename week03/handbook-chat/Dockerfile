@@ -4,10 +4,11 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Install packages first so Docker can reuse this layer when only app.py changes.
-COPY requirements.txt .
+COPY handbook-chat/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY hr_policy.txt app.py ./
+COPY handbook-chat/app.py ./
+COPY policies ./policies
 
 ENV PYTHONUNBUFFERED=1
 
