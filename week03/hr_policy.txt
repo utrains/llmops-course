@@ -1,0 +1,31 @@
+# HR Policy
+
+This is the official HR policy. Use it for account setup, expense reimbursements, time off, and parental leave.
+
+## Section 1: Setting Up Your Account
+To set up your account, visit the company portal at portal.example.com.
+Click the "Sign Up" button. You will receive a confirmation email within
+five minutes. If you do not see the email, check your spam folder.
+The portal supports two factor authentication, which we strongly recommend.
+
+## Section 2: Your First Week
+In your first week, your manager will walk you through three things:
+the team rituals, the on-call calendar, and the deployment pipeline.
+You will also meet your buddy, who is your primary point of contact for
+non-urgent questions for your first 30 days.
+
+## Section 3: Reimbursements
+To submit a reimbursement, log into the finance portal at finance.example.com.
+Upload your receipt as a PDF. Reimbursements take 7 to 10 business days.
+For travel under $500, no pre-approval is needed. Above $500 requires
+your manager and finance team approval.
+
+## Section 4: Time Off
+Submit time off requests through the HR portal. We have an unlimited PTO
+policy with a 2 week minimum suggested per year. Sick days are tracked
+separately. To request bereavement leave, contact HR directly.
+
+## Section 5: Parental Leave
+Full-time employees receive 16 weeks of paid parental leave. The leave
+may be taken any time in the first 12 months after the child's arrival.
+Notify HR at least 30 days in advance when the date is predictable.
