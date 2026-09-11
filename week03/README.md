@@ -2,7 +2,26 @@
 
 Week 1 introduced model calls. Week 2 introduced controlled prompts, structured output, and tools. Week 3 adds company knowledge through retrieval-augmented generation.
 
-The proposition is an HR policy assistant that gives employees immediate, grounded answers from approved company policies instead of sending every question to an HR mailbox. If the current email process can take up to 24 hours, the assistant can provide a first response in seconds, twenty-four hours a day, while citing the policy evidence used. That gives HR more time for complex and sensitive cases, reduces repeated questions, shortens response queues, improves consistency, and creates a measurable record of which questions remain unresolved. The labs expose each moving part so the stakeholder can see how those benefits are delivered and measured rather than hidden behind a framework.
+The proposition is an HR policy assistant that gives employees immediate, grounded answers from approved company policies instead of sending every question to an HR mailbox. If the current email process can take up to 24 hours, the assistant can provide a first response in seconds, twenty-four hours a day, while citing the policy evidence used. That gives HR more time for complex and sensitive cases, reduces repeated questions, shortens response queues, improves consistency, and creates a measurable record of which questions remain unresolved.
+
+## Proposed solution: a RAG system
+
+The proposed solution is a retrieval-augmented generation system, or RAG. It retrieves relevant passages from the approved HR policy collection and gives those passages to the language model as evidence before the answer is written.
+
+RAG is appropriate for this use case because it can:
+
+- answer from the company's current approved policies instead of relying only on model memory;
+- update its knowledge by re-indexing changed documents rather than retraining the language model;
+- cite the source document and page so employees and HR can verify the answer;
+- refuse or escalate when the retrieved policies do not contain enough evidence;
+- apply metadata such as policy version, status, department, region, and access scope;
+- reduce repeated routine questions and shorten the HR response queue;
+- provide a consistent first response twenty-four hours a day;
+- preserve the language model's ability to explain policy in natural language;
+- measure retrieval quality, answer quality, latency, and unresolved questions;
+- create an operational path that can later connect to approved HR tools and workflows.
+
+The labs expose each moving part so the stakeholder can see how these benefits are delivered and measured rather than hidden behind a framework.
 
 ## Engineering ownership
 
