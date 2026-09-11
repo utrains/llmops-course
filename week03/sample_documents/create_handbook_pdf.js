@@ -14,6 +14,16 @@ const sections = [
   ['Questions and Exceptions', 'Ask the HR operations team when a policy is unclear. Approved exceptions must be recorded in the HR system.']
 ];
 
+// Repeat realistic handbook sections so the lab works with a longer document.
+// A production corpus would contain many separate source documents instead.
+while (sections.length < 40) {
+  const number = sections.length + 1;
+  sections.push([
+    `Operations Policy ${number}`,
+    `This handbook section describes an approved company process, its owner, the required records, and the exception path. Employees should follow the current version published by the policy owner.`
+  ]);
+}
+
 const objects = [];
 objects[1] = '<< /Type /Catalog /Pages 2 0 R >>';
 objects[2] = '<< /Type /Pages /Kids [' + sections.map((_, i) => `${5 + i * 2} 0 R`).join(' ') + `] /Count ${sections.length} >>`;
