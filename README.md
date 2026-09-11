@@ -8,7 +8,7 @@ The labs materials are the following:
 
 - Week 1: [week01](./week01/README.md)
 - Week 2: [week02](./week02/README.md)
-- Week 3: coming soon
+- Week 3: [week01](./week03/README.md)
 - Week 4: coming soon
 - Week 5: coming soon
 - Week 6: coming soon
