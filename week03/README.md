@@ -2,7 +2,7 @@
 
 Week 1 introduced model calls. Week 2 introduced controlled prompts, structured output, and tools. Week 3 adds company knowledge through retrieval-augmented generation.
 
-The business scenario remains the same across all three labs: employees need reliable answers from approved HR policies. The labs expose each moving part so changes can be measured rather than hidden behind a framework.
+The proposition is an HR policy assistant that gives employees immediate, grounded answers from approved company policies instead of sending every question to an HR mailbox. If the current email process can take up to 24 hours, the assistant can provide a first response in seconds, twenty-four hours a day, while citing the policy evidence used. That gives HR more time for complex and sensitive cases, reduces repeated questions, shortens response queues, improves consistency, and creates a measurable record of which questions remain unresolved. The labs expose each moving part so the stakeholder can see how those benefits are delivered and measured rather than hidden behind a framework.
 
 ## Engineering ownership
 
@@ -21,13 +21,13 @@ The notebooks do not stop at retrieving text. They also make the pipeline review
 - latency and retrieved sources are recorded for troubleshooting;
 - a release decision is made from evaluation results before the application is containerized.
 
-The lab uses an in-memory vector store so each moving part stays visible. The same index contract can later be implemented with pgvector or another production vector store.
+The lab uses a local Chroma vector store so each moving part stays visible. The same index contract can later be implemented with pgvector, Pinecone, Qdrant, Weaviate, Milvus, OpenSearch, Azure AI Search, or another production vector store.
 
 ## Lab progression
 
 | Lab | Business mission | Moving pieces exposed |
 | --- | --- | --- |
-| [Lab 1](./lab1_from_a_handbook_to_a_search.ipynb) | Turn approved HR documents into a searchable, traceable index. | source inspection, section parsing, recursive splitting, chunk size, overlap, metadata, embeddings, similarity, top k |
+| [Lab 1](./lab1_from_a_handbook_to_a_search.ipynb) | Turn a handbook PDF into a searchable, traceable index. | PDF loading, page inspection, recursive splitting, chunk size, overlap, metadata, embeddings, Chroma, similarity search |
 | [Lab 2](./lab2_end_to_end_chat_with_your_own_docs.ipynb) | Produce a grounded HR answer with citations and an insufficient-evidence response. | retrieval, context construction, system instructions, generation model, citations, missing evidence |
 | [Lab 3](./lab3_watch_rag_fail_on_real_world_edge_cases.ipynb) | Evaluate retrieval and make an evidence-based release decision. | exact identifiers, conflicting versions, lifecycle filters, missing answers, tests, latency, release gate |
 | [Containerized app](./handbook-chat/) | Run the same request path through a chat interface. | Streamlit, cached index, API configuration, Docker |
@@ -39,6 +39,8 @@ Each exercise follows the same learning pattern:
 3. One focused code change
 4. Output inspection
 5. Production conclusion
+
+The notebooks are designed to be run from top to bottom. Each code cell has one focused job, and the output is part of the lesson. If the kernel is restarted, run the earlier cells again before continuing.
 
 ## Request path
 
@@ -72,6 +74,19 @@ ANTHROPIC_API_KEY=your-key
 ```
 
 Open the notebooks from the `week03` directory and run them in order. API inputs leave the local machine, so company documents require an approved provider, data-handling policy, and access model.
+
+Never commit a real key. The `.env` file is git-ignored.
+
+## Troubleshooting
+
+| Symptom | What to check |
+| --- | --- |
+| `ModuleNotFoundError` for LangChain, Chroma, or `pypdf` | Run the Week 3 install command and confirm that the notebook uses the project virtual environment. |
+| Missing API key or authentication error | Confirm that `week03/.env` exists, contains the correct key, and that the kernel was restarted after creating it. |
+| PDF text is empty or incomplete | The source may be scanned or use a complex layout. Production systems use OCR or a managed document parser for those files. |
+| Chroma returns no useful matches | Check that the index cell ran, the question uses the same embedding model, and the retrieved chunks are printed before generation. |
+| The answer says there is not enough evidence | That is an intended result when the retrieved policy does not support the question. |
+| Docker cannot start the application | Confirm Docker Desktop is running and that the application `.env` file exists. |
 
 ## Models
 
