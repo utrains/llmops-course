@@ -75,6 +75,18 @@ Approved HR documents
     -> evaluate and make a release decision
 ```
 
+## Prerequisites
+
+Before opening the notebooks, make sure you have:
+
+- A working Python virtual environment from the repository setup
+- An OpenAI API key for creating document and question embeddings
+- An Anthropic API key for generating the grounded HR response
+- Permission to send the sample handbook text to those providers
+- Docker Desktop if you will run the containerized application
+
+The two providers have different responsibilities in this project. OpenAI handles embeddings. Anthropic Claude handles answer generation. Both keys are required for the complete request path.
+
 ## Setup
 
 From the repository root:
